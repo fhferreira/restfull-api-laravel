@@ -23,3 +23,11 @@ Route::group(['prefix' => 'api/v1'], function() {
 	Route::get("product/{id}", ['uses' => 'ProductController@show', 'middleware'=>'auth.basic.once']);
 	Route::post('product/create', ['uses' => 'ProductController@create','middleware'=>'auth.basic.once']);
 });
+
+/*
+$router->group(['prefix' => 'api/v1'], function() use ($router) {
+	$router->resource("product", "ProductController", ['except' => ['create', 'store', 'update', 'destroy', 'show']]);
+	$router->get("product/{id}", ['uses' => 'ProductController@show', 'middleware'=>'auth.basic.once']);
+	$router->post('product/create', ['uses' => 'ProductController@create','middleware'=>'auth.basic.once']);
+});
+*/
