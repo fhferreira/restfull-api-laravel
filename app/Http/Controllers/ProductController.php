@@ -40,9 +40,9 @@ class ProductController extends ApiController
         {
             $products->load("category");
         }
-        return Response::json([ 
+        return $this->respond([ 
             'data' => $this->productTransformer->transformCollection($products->toArray())
-            ], 200);
+            ]);
     }
 
     /**
@@ -83,9 +83,9 @@ class ProductController extends ApiController
                 $product->load("category");
             }
 
-            return Response::json([
+            return $this->respond([
                 'data' => $this->productTransformer->transform($product->toArray())
-                ], 200);
+                ]);
 
         } catch (\Exception $e) {
 

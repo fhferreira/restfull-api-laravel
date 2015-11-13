@@ -14,16 +14,12 @@ class ApiController extends Controller {
 	public function setStatusCode($statusCode)
 	{
 		$this->statusCode = $statusCode;
+		return $this;
 	}
 
 	public function respondNotFound($message = 'Not Found')
 	{
-		return $this->respond([
-					'error' => [
-							'message' => $message,
-							'code' => $this->getStatusCode()
-						]
-				]);
+		return $this->setStatusCode(404)->respondWithError($message);
 	}
 
 	public function respond($data, $headers = [])
@@ -39,6 +35,11 @@ class ApiController extends Controller {
 							'code' => $this->getStatusCode()
 						]
 				]);
+	}
+
+	public function respondInternalError($message = 'Internal Error!') 
+	{
+		return $this->setStatusCode(500)->respondWithError($message);
 	}
 
 }
