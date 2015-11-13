@@ -1,0 +1,8 @@
+- run: composer create-project laravel/laravel restfull-api-laravel-basic-auth/ --prefer-dist
+- create database
+- configure .env
+- run: php artisan make:model Category -m
+- run: php artisan make:model Products -m
+- run: php artisan make:controller CategoryController
+- run: php artisan make:controller ProductController
+
