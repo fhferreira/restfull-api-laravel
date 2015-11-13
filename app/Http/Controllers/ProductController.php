@@ -9,7 +9,7 @@ use Response;
 use App\Http\Controllers\Controller;
 use App\Acme\Transformers\ProductTransformer;
 
-class ProductController extends Controller
+class ProductController extends ApiController
 {
 
     protected $productTransformer;
@@ -89,11 +89,13 @@ class ProductController extends Controller
 
         } catch (\Exception $e) {
 
-            return \Response::json(['error' => [
-                'message' => 'Product not found',
-                'code' => 1
-                ]
-            ], 404);
+            return $this->respondNotFound("Product not found");
+
+            //return \Response::json(['error' => [
+            //    'message' => 'Product not found',
+            //    'code' => 1
+            //    ]
+            //], 404);
 
         }
     }
