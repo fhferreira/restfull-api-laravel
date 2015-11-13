@@ -17,6 +17,12 @@ class ProductController extends Controller
     public function index()
     {
         $products = \App\Product::all();
+        #bad-pratices
+        //1. All is bad
+        //2. No way to attach meta data $hidden;
+        //3. Linking db structure to the API Output
+        //4. No way to signal headers/response codes
+
         if ( \Request::has("showCategory") && \Request::get("showCategory") == 1)
         {
             $products->load("category");

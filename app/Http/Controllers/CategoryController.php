@@ -16,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = \App\Category::all();
+        $categories = \App\Category::all(); #bad-pratice
         if ( \Request::has("showProducts") && \Request::get("showProducts") == 1)
         {
             $categories->load("products");
