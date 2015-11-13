@@ -16,6 +16,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        #bad-pratices
+        //1. All is bad
+        //2. No way to attach meta data $hidden;
+        //3. Linking db structure to the API Output
+        //4. No way to signal headers/response codes
+
         $categories = \App\Category::all(); #bad-pratice
         if ( \Request::has("showProducts") && \Request::get("showProducts") == 1)
         {
