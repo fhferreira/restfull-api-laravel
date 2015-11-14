@@ -18,16 +18,24 @@ Route::get('/', function () {
 Route::resource("category", "CategoryController", ['only' => ['index', 'show']]);
 Route::post('category/create', ['uses' => 'CategoryController@create','middleware'=>'auth.basic.once']);
 
+/*
 Route::group(['prefix' => 'api/v1'], function() {
 	Route::resource("product", "ProductController", ['except' => ['create', 'store', 'update', 'destroy', 'show']]);
 	Route::get("product/{id}", ['uses' => 'ProductController@show', 'middleware'=>'auth.basic.once']);
 	Route::post('product/create', ['uses' => 'ProductController@create','middleware'=>'auth.basic.once']);
 });
-
-/*
-$router->group(['prefix' => 'api/v1'], function() use ($router) {
-	$router->resource("product", "ProductController", ['except' => ['create', 'store', 'update', 'destroy', 'show']]);
-	$router->get("product/{id}", ['uses' => 'ProductController@show', 'middleware'=>'auth.basic.once']);
-	$router->post('product/create', ['uses' => 'ProductController@create','middleware'=>'auth.basic.once']);
-});
 */
+
+$router->group(['prefix' => 'api/v1'], function() use ($router) {
+	$router->resource("product", "ProductController", ['except' => ['create', 'store', 'update', 'destroy']]);
+	//$router->get("product/{id}", ['uses' => 'ProductController@show', 'middleware'=>'auth.basic.once']);
+	$router->post('product/create', ['uses' => 'ProductController@create', 'middleware'=>'auth.basic.once'/**/]);
+});
+
+Route::get('login', function(){
+	return Auth::basic();
+});
+
+Route::get('logout', function(){
+	    return redirect(preg_replace("/:\/\//", "://log-me-out:fake-pwd@", url('login')));
+});

@@ -1,6 +1,9 @@
 <?php namespace App\Http\Controllers;
 
 use Illuminate\Routing\Controller;
+use Response;
+//use Symfony\Component\HttpFoundation\Response as IlluminateResponse;
+use Illuminate\Http\Response as IlluminateResponse;
 
 class ApiController extends Controller {
 
@@ -19,12 +22,12 @@ class ApiController extends Controller {
 
 	public function respondNotFound($message = 'Not Found')
 	{
-		return $this->setStatusCode(404)->respondWithError($message);
+		return $this->setStatusCode(IlluminateResponse::HTTP_NOT_FOUND)->respondWithError($message);
 	}
 
 	public function respond($data, $headers = [])
 	{
-		return \Response::json($data, $this->getStatusCode(), $headers); 
+		return Response::json($data, $this->getStatusCode(), $headers); 
 	}
 
 	public function respondWithError($message)
@@ -39,7 +42,7 @@ class ApiController extends Controller {
 
 	public function respondInternalError($message = 'Internal Error!') 
 	{
-		return $this->setStatusCode(500)->respondWithError($message);
+		return $this->setStatusCode(IlluminateResponse::HTTP_INTERNAL_SERVER_ERROR)->respondWithError($message);
 	}
 
 }

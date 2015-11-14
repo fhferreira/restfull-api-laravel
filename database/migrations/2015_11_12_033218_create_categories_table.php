@@ -13,6 +13,7 @@ class CreateCategoriesTable extends Migration
     public function up()
     {
         Schema::create('categories', function (Blueprint $table) {
+            $table->engine = 'innoDB';
             $table->increments('id');
             $table->string("name");
             $table->timestamps();

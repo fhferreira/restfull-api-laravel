@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use Response;
+use Auth;
 use App\Http\Controllers\Controller;
 use App\Acme\Transformers\ProductTransformer;
 
@@ -17,6 +18,8 @@ class ProductController extends ApiController
     public function __construct(ProductTransformer $productTransformer)
     {
         $this->productTransformer = $productTransformer;
+
+        //$this->beforeFilter("auth.basic.once", ['only' => ['create']]);
     }
 
     /**
@@ -26,12 +29,16 @@ class ProductController extends ApiController
      */
     public function index()
     {
-        $products = \App\Product::all();
+        $itemsPerPage = 15;
+        $products = new \App\Product();
+        $products = $products->paginate($itemsPerPage);
         #bad-pratices
         //1. All is bad
         //2. No way to attach meta data - $hidden;
         //3. Linking db structure to the API Output
         //4. No way to signal headers/response codes
+
+        //dd($products);
 
         #test - curl -i http://localhost:8000/product
         #status-codes: https://www.ietf.org/rfc/rfc2616.txt
@@ -40,8 +47,15 @@ class ProductController extends ApiController
         {
             $products->load("category");
         }
+
         return $this->respond([ 
-            'data' => $this->productTransformer->transformCollection($products->toArray())
+            'data' => $this->productTransformer->transformCollection($products),
+            'paginator' => [
+                'total_count'  => $products->total(),
+                'total_pages'  => ceil($products->total() / $products->perPage()),
+                'current_page' => $products->currentPage(),
+                'limit'        => $products->perPage()
+                ]
             ]);
     }
 
@@ -50,9 +64,36 @@ class ProductController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+
+        $rules = [
+                    'name'        => 'required|unique:products,name',
+                    'category_id' => 'required|exists:categories,id'
+                ];
+
+        $messages = [
+            'name.required'     => 'Name is required.',
+            'name.unique'       => 'Name need to be unique.',
+            'category.required' => 'Category is required.',
+            'category.exists'   => 'Category need to exists in Categories registers.'
+        ];
+
+        $validator = \Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()){
+            dd($request->all(), $validator);
+            return $this->setStatusCode(402)->respondWithError('Validation fails');
+        }
+
+        $product = new \App\Product();
+        $product->fill($request->all());
+        $product->category_id = $request->get('category_id');
+        $product->save();
+
+        return $this->setStatusCode(201)->respond([
+                'message' => 'Product created successfully'
+            ]);
     }
 
     /**
