@@ -1,11 +1,11 @@
-<?php namespace App\Acme\Transformers;
+<?php namespace app\Acme\Transformers;
 
 class ProductTransformer extends Transformer
 {
     public function transform($product)
     {
         $category = [];
-        if(isset($product['category'])){
+        if (isset($product['category'])) {
             $category = [
                 'title' => $product['category']['name'],
                 'id' => $product['category']['id'],
@@ -18,9 +18,9 @@ class ProductTransformer extends Transformer
         ];
 
         if ($category) {
-           $data['category'] = $category;
+            $data['category'] = $category;
         } else {
-           $data['category_id'] = $product['category_id'];
+            $data['category_id'] = $product['category_id'];
         }
 
         return $data;
