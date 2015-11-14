@@ -19,6 +19,13 @@ class ApiTester extends TestCase
     public function times($count)
     {
         $this->times = $count;
+
+        return $this;
+    }
+
+    public function getJson($uri)
+    {
+        return json_encode($this->call('GET', $uri)->getContent());
     }
 
 }

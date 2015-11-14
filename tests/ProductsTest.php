@@ -19,13 +19,16 @@ class ProductsTest extends ApiTester
 
     private function makeProduct($productFields = [])
     {
-        $product = array_merge([
+        $productData = array_merge([
             'name' => $this->fake->name,
             'category_id' =>rand(1, 10)
         ], $productFields);
 
         while ($this->times--) {
-            App\Product::create($product);
+            $product = new \App\Product();
+            $product->fill($productData);
+            $product->category_id = $productData['category_id'];
+            $product->save();
         }
     }
 }
