@@ -29,6 +29,9 @@ class ProductController extends ApiController
     {
         $itemsPerPage = 15;
         $products = new \App\Product();
+        if (\Request::has("showCategory") && \Request::get("showCategory") == 1) {
+            $products = $products->with("category");
+        }
         $products = $products->paginate($itemsPerPage);
         #bad-pratices
         //1. All is bad
@@ -101,7 +104,7 @@ class ProductController extends ApiController
     {
         try {
             $product = \App\Product::findOrFail($id);
-            
+
             if (\Request::has("showCategory") && \Request::get("showCategory") == 1) {
                 $product->load("category");
             }
@@ -111,12 +114,6 @@ class ProductController extends ApiController
                 ]);
         } catch (\Exception $e) {
             return $this->respondNotFound("Product not found");
-
-            //return \Response::json(['error' => [
-            //    'message' => 'Product not found',
-            //    'code' => 1
-            //    ]
-            //], 404);
         }
     }
 
@@ -169,7 +166,11 @@ class ProductController extends ApiController
     protected function getProducts($categoryId)
     {
         try {
-            return $categoryId ? \App\Category::findOrFail($categoryId)->products : \App\Product::all();
+            $products = $categoryId ? \App\Category::findOrFail($categoryId)->products : \App\Product::all();
+            if (\Request::has("showCategory") && \Request::get("showCategory") == 1) {
+                $products = $products->load("category");
+            }
+            return $products;
         } catch (\Exception $e) {
             return null;
         }
