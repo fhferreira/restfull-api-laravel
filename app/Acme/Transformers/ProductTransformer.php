@@ -1,4 +1,4 @@
-<?php namespace app\Acme\Transformers;
+<?php namespace App\Acme\Transformers;
 
 class ProductTransformer extends Transformer
 {
