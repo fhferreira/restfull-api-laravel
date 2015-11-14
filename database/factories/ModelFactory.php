@@ -22,13 +22,16 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Category::class, function (Faker\Generator $faker) {
     return [
-        'name' => $faker->name
+        'name' => $faker->word
     ];
 });
 
 $factory->define(App\Product::class, function (Faker\Generator $faker) {
+
+    $categoryIds = App\Category::lists('id');
+
     return [
-        'name' => $faker->name,
-        'category_id' => rand(1, 10)
+        'name' => $faker->word,
+        'category_id' => $faker->randomElement($categoryIds->toArray())
     ];
 });

@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace app\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 use Response;
 use Auth;
@@ -12,7 +11,6 @@ use App\Acme\Transformers\ProductTransformer;
 
 class ProductController extends ApiController
 {
-
     protected $productTransformer;
 
     public function __construct(ProductTransformer $productTransformer)
@@ -53,7 +51,6 @@ class ProductController extends ApiController
      */
     public function create(Request $request)
     {
-
         $rules = [
                     'name'        => 'required|unique:products,name',
                     'category_id' => 'required|exists:categories,id'
@@ -68,7 +65,7 @@ class ProductController extends ApiController
 
         $validator = \Validator::make($request->all(), $rules, $messages);
 
-        if ($validator->fails()){
+        if ($validator->fails()) {
             dd($request->all(), $validator);
             return $this->setStatusCode(402)->respondWithError('Validation fails');
         }
@@ -103,20 +100,16 @@ class ProductController extends ApiController
     public function show($id)
     {
         try {
-            
             $product = \App\Product::findOrFail($id);
             
-            if ( \Request::has("showCategory") && \Request::get("showCategory") == 1)
-            {
+            if (\Request::has("showCategory") && \Request::get("showCategory") == 1) {
                 $product->load("category");
             }
 
             return $this->respond([
                 'data' => $this->productTransformer->transform($product->toArray())
                 ]);
-
         } catch (\Exception $e) {
-
             return $this->respondNotFound("Product not found");
 
             //return \Response::json(['error' => [
@@ -124,7 +117,6 @@ class ProductController extends ApiController
             //    'code' => 1
             //    ]
             //], 404);
-
         }
     }
 
@@ -163,7 +155,23 @@ class ProductController extends ApiController
     }
 
     
+    public function byCategory($id = null)
+    {
+        $products = $this->getProducts($id);
+        
+        if (! $products) {
+            return $this->respondNotFound("Category not found");
+        }
 
+        return $this->respond(['data' => $this->productTransformer->transformCollection($products)]);
+    }
     
-
+    protected function getProducts($categoryId)
+    {
+        try {
+            return $categoryId ? \App\Category::findOrFail($categoryId)->products : \App\Product::all();
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
 }
