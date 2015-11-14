@@ -30,6 +30,24 @@ class ApiController extends Controller {
 		return Response::json($data, $this->getStatusCode(), $headers); 
 	}
 
+	public function respondWithPaginator($data, $paginator)
+	{
+		return $this->respond([
+			    'data'         => $data, 
+				'paginator'    => [
+	                'total_count'  => $paginator->total(),
+	                'total_pages'  => ceil($paginator->total() / $paginator->perPage()),
+	                'current_page' => $paginator->currentPage(),
+	                'limit'        => $paginator->perPage(),
+	                'links'        => [
+				                        'prev' => $paginator->previousPageUrl(),
+				                        'next' => $paginator->nextPageUrl(),
+				                        'last' => $paginator->lastPage()
+			                		   ]
+	            ]
+			]);
+	}
+
 	public function respondWithError($message)
 	{
 		return $this->respond([

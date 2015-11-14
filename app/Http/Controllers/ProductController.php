@@ -43,20 +43,7 @@ class ProductController extends ApiController
         #test - curl -i http://localhost:8000/product
         #status-codes: https://www.ietf.org/rfc/rfc2616.txt
 
-        if ( \Request::has("showCategory") && \Request::get("showCategory") == 1)
-        {
-            $products->load("category");
-        }
-
-        return $this->respond([ 
-            'data' => $this->productTransformer->transformCollection($products),
-            'paginator' => [
-                'total_count'  => $products->total(),
-                'total_pages'  => ceil($products->total() / $products->perPage()),
-                'current_page' => $products->currentPage(),
-                'limit'        => $products->perPage()
-                ]
-            ]);
+        return $this->respondWithPaginator($this->productTransformer->transformCollection($products), $products);
     }
 
     /**
